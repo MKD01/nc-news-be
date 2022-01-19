@@ -11,3 +11,19 @@ exports.checkArticleExists = (articleId) => {
       }
     });
 };
+
+exports.checkTopicExists = (topicCheck) => {
+  return db.query(`SELECT topic FROM articles`).then((result) => {
+    if (!topicCheck) {
+      return true;
+    } else {
+      return result.rows.some((topicValue) => {
+        if (topicValue.topic === topicCheck) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+  });
+};
