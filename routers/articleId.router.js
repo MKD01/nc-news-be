@@ -1,11 +1,9 @@
 const express = require('express');
+const { getArticleByArticleId } = require('../controllers/articles.controller');
 
 const articleId = express.Router();
 
-articleRouter.get('/');
-articleRouter.patch('/');
-
-articleRouter.get('/comments');
-articleRouter.post('/comments');
+articleId.get('/comments');
+articleId.post('/comments');
 
 module.exports = articleId;
