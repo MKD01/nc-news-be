@@ -250,8 +250,8 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
-          body.articles.forEach((topic) => {
-            expect(topic).toMatchObject({
+          body.comments.forEach((comment) => {
+            expect(comment).toMatchObject({
               comment_id: expect.any(Number),
               votes: expect.any(Number),
               created_at: expect.any(String),
@@ -261,24 +261,73 @@ describe('/api/articles/:article_id/comments', () => {
           });
         });
     });
+
+    test('Return status code 400 if article_id is not valid', () => {
+      return request(app)
+        .get('/api/articles/apple/comments')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
+
+    test('Return status code 404 if article_id is valid but no comments have that given article_id', () => {
+      return request(app)
+        .get('/api/articles/8/comments')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+    });
   });
 
   describe('POST', () => {
-    // test('Return status code 201 with the new comment', () => {
-    //   const newComment = { username: 'bob', body: 'an interesting story' };
-    //   return request(app)
-    //     .get('/api/articles/1/comments')
-    //     .send({ username: 'bob', body: 'an interesting story' })
-    //     .expect(201)
-    //     .then(({ body }) => {
-    //       expect(topic).toEqual({
-    //         comment_id: expect.any(Number),
-    //         votes: expect.any(Number),
-    //         created_at: expect.any(String),
-    //         body: 'an interesting story',
-    //         author: 'bob',
-    //       });
-    //     });
-    // });
+    test('Return status code 201 with the new comment', () => {
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'an interesting story',
+      };
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            body: 'an interesting story',
+            author: 'butter_bridge',
+          });
+        });
+    });
+
+    test('Return status code 400 if article_id is not valid', () => {
+      const newComment = {
+        username: 'butter_bridge',
+        body: 'an interesting story',
+      };
+      return request(app)
+        .post('/api/articles/apple/comments')
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
+
+    test('Return status code 404 if username is not valid', () => {
+      const newComment = {
+        username: 'notAUser',
+        body: 'an interesting story',
+      };
+      return request(app)
+        .post('/api/articles/8/comments')
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
   });
 });

@@ -27,3 +27,15 @@ exports.checkTopicExists = (topicCheck) => {
     }
   });
 };
+
+exports.checkAuthorExists = (userName) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [userName])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
