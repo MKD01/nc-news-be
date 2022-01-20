@@ -39,7 +39,7 @@ describe('/api/articles/:article_id', () => {
         .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
-          expect(body.result).toEqual({
+          expect(body.article).toEqual({
             article_id: 1,
             title: 'Living in the shadow of a great man',
             body: 'I find this existence challenging',
@@ -81,7 +81,7 @@ describe('/api/articles/:article_id', () => {
         .expect(201)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
-          expect(body.result).toEqual({
+          expect(body.article).toEqual({
             article_id: 1,
             title: 'Living in the shadow of a great man',
             body: 'I find this existence challenging',
@@ -102,7 +102,7 @@ describe('/api/articles/:article_id', () => {
         .expect(201)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
-          expect(body.result).toEqual({
+          expect(body.article).toEqual({
             article_id: 1,
             title: 'Living in the shadow of a great man',
             body: 'I find this existence challenging',
@@ -147,7 +147,7 @@ describe('/api/articles', () => {
         .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
-          body.result.forEach((article) => {
+          body.articles.forEach((article) => {
             expect(article).toMatchObject({
               article_id: expect.any(Number),
               title: expect.any(String),
@@ -167,7 +167,9 @@ describe('/api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.result).toBeSortedBy('created_at', { descending: true });
+          expect(body.articles).toBeSortedBy('created_at', {
+            descending: true,
+          });
         });
     });
 
@@ -176,7 +178,7 @@ describe('/api/articles', () => {
         .get('/api/articles?sort_by=article_id')
         .expect(200)
         .then(({ body }) => {
-          expect(body.result).toBeSortedBy('article_id', {
+          expect(body.articles).toBeSortedBy('article_id', {
             descending: true,
           });
         });
@@ -187,7 +189,7 @@ describe('/api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-          expect(body.result).toBeSorted({ descending: true });
+          expect(body.articles).toBeSorted({ descending: true });
         });
     });
 
@@ -196,7 +198,7 @@ describe('/api/articles', () => {
         .get('/api/articles?order_by=ASC')
         .expect(200)
         .then(({ body }) => {
-          expect(body.result).toBeSorted({ ascending: true });
+          expect(body.articles).toBeSorted({ ascending: true });
         });
     });
 
@@ -205,7 +207,7 @@ describe('/api/articles', () => {
         .get('/api/articles?topic=mitch')
         .expect(200)
         .then(({ body }) => {
-          body.result.forEach((article) => {
+          body.articles.forEach((article) => {
             expect(article.topic).toBe('mitch');
           });
         });
@@ -237,5 +239,46 @@ describe('/api/articles', () => {
           expect(body.msg).toBe('Bad request');
         });
     });
+  });
+});
+
+describe('/api/articles/:article_id/comments', () => {
+  describe('GET', () => {
+    test('Return status code 200 with an array of comments for the given article id', () => {
+      return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe('object');
+          body.articles.forEach((topic) => {
+            expect(topic).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              body: expect.any(String),
+              author: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+
+  describe('POST', () => {
+    // test('Return status code 201 with the new comment', () => {
+    //   const newComment = { username: 'bob', body: 'an interesting story' };
+    //   return request(app)
+    //     .get('/api/articles/1/comments')
+    //     .send({ username: 'bob', body: 'an interesting story' })
+    //     .expect(201)
+    //     .then(({ body }) => {
+    //       expect(topic).toEqual({
+    //         comment_id: expect.any(Number),
+    //         votes: expect.any(Number),
+    //         created_at: expect.any(String),
+    //         body: 'an interesting story',
+    //         author: 'bob',
+    //       });
+    //     });
+    // });
   });
 });

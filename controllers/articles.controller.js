@@ -11,8 +11,8 @@ exports.getArticleByArticleId = (req, res, next) => {
   return checkArticleExists(articleId)
     .then((articleExists) => {
       if (articleExists) {
-        return selectArticleByArticleId(articleId).then((result) => {
-          return res.status(200).send({ result });
+        return selectArticleByArticleId(articleId).then((article) => {
+          return res.status(200).send({ article });
         });
       } else {
         return Promise.reject({ status: 404, msg: 'Not found' });
@@ -30,8 +30,8 @@ exports.patchArticleByArticleId = (req, res, next) => {
     .then((articleExists) => {
       if (articleExists) {
         return updateArticlebyArticleId(articleBody, articleId).then(
-          (result) => {
-            return res.status(201).send({ result });
+          (article) => {
+            return res.status(201).send({ article });
           }
         );
       } else {
@@ -50,8 +50,8 @@ exports.getArticles = (req, res, next) => {
   checkTopicExists(topic)
     .then((topicExists) => {
       if (topicExists) {
-        return selctArticles(sortBy, order_by, topic).then((result) => {
-          return res.status(200).send({ result });
+        return selctArticles(sortBy, order_by, topic).then((articles) => {
+          return res.status(200).send({ articles });
         });
       } else {
         return Promise.reject({ status: 400, msg: 'Bad request' });
