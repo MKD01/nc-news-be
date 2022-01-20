@@ -7,8 +7,6 @@ const { getArticles } = require('../controllers/articles.controller');
 
 const apiRouter = express.Router();
 
-apiRouter.get('/');
-
 apiRouter.get('/topics', getTopics);
 
 apiRouter.get('/articles', getArticles);
@@ -17,6 +15,6 @@ apiRouter.use('/articles', articleRouter);
 
 apiRouter.use('/users', userRouter);
 
-apiRouter.route('/comments', commentRouter);
+apiRouter.use('/comments', commentRouter);
 
 module.exports = apiRouter;

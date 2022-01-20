@@ -331,3 +331,38 @@ describe('/api/articles/:article_id/comments', () => {
     });
   });
 });
+
+describe('/api/comments/:comment_id', () => {
+  describe('DELETE', () => {
+    test('Returns status code 204', () => {
+      return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
+
+    test('Return status code 404 with an error message if comment_id exists', () => {
+      return request(app)
+        .delete('/api/comments/300000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+    });
+  });
+});
+
+describe('/api', () => {
+  describe('GET', () => {
+    test('Return status code 200 and read conetents of endpoints.json', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body.data).toBe('string');
+        });
+    });
+  });
+});

@@ -1,27 +1,108 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Returns a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Returns an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Returns an array of all topics",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "body": "I find this existence challenging",
+          "votes": 100,
+          "author": "butter_bridge",
+          "topic": "mitch",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "comment_count": 11
         }
       ]
+    }
+  },
+  "GET /api/articles/article_id": {
+    "description": "Returns an article object using article_id",
+    "queries": [],
+    "params": { "article_id": 1 },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "body": "I find this existence challenging",
+        "votes": 100,
+        "author": "butter_bridge",
+        "topic": "mitch",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "comment_count": 11
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the votes property of the article object using article_id",
+    "queries": [],
+    "params": { "article_id": 1 },
+    "body": { "inc_votes": 10 },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "body": "I find this existence challenging",
+        "votes": 110,
+        "author": "butter_bridge",
+        "topic": "mitch",
+        "created_at": "2021-06-09T30:03:40.000Z",
+        "comment_count": 11
+      }
+    }
+  },
+  "GET /api/articles/article_id/comments": {
+    "description": "Returns an array of all the comments using article_id",
+    "queries": [],
+    "params": { "article_id": 1 },
+    "exampleResponse": {
+      "article": [
+        {
+          "comment_id": 1,
+          "votes": 100,
+          "author": "butter_bridge",
+          "body": "an interesting story",
+          "created_at": "2022-12-03T05:01:04.000Z"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/article_id/comments": {
+    "description": "Creates a new comment using username, body and article_id",
+    "queries": [],
+    "params": { "article_id": 1 },
+    "body": {
+      "username": "butter_bridge",
+      "body": "an interesting story"
+    },
+    "exampleResponse": {
+      "article": {
+        "comment_id": 50,
+        "votes": 0,
+        "author": "butter_bridge",
+        "body": "an interesting story",
+        "created_at": "2022-12-04T05:12:54.000Z"
+      }
+    }
+  },
+  "DELETE /api/comments/comment_id": {
+    "description": "Deletes a comment using comment_id",
+    "queries": [],
+    "params": { "comment_id": 50 },
+    "body": {
+      "username": "butter_bridge",
+      "body": "an interesting story"
     }
   }
 }
