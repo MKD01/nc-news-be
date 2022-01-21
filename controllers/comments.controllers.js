@@ -29,7 +29,7 @@ exports.patchCommentByCommentId = (req, res, next) => {
       if (commentExists) {
         return updateCommentbyCommentId(articleBody, commentId).then(
           (comment) => {
-            return res.status(201).send({ comment });
+            return res.status(200).send({ comment });
           }
         );
       } else {

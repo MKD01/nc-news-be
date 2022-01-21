@@ -11,6 +11,7 @@ const apiRouter = express.Router();
 apiRouter.get('/topics', getTopics);
 
 apiRouter.get('/articles', getArticles);
+apiRouter.post('articles');
 apiRouter.use('/articles', articleRouter);
 
 apiRouter.get('/users', getUsers);

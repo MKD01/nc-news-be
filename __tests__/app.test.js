@@ -78,6 +78,33 @@ describe('/api/articles', () => {
         });
     });
 
+    test('Return status code 200 which limits the return results by 4 with a default value of 10', () => {
+      return request(app)
+        .get('/api/articles?limit=4&order_by=ASC')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(4);
+        });
+    });
+
+    test('Return status code 200 with an offset based on the page number', () => {
+      return request(app)
+        .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).toBe(5);
+        });
+    });
+
+    test('Return status code 200 with a property  displaying the total number of articles', () => {
+      return request(app)
+        .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
+        .expect(200)
+        .then(({ body }) => {
+          // console.log(body);
+        });
+    });
+
     test('Return status code 200 and should be sorted by article_id', () => {
       return request(app)
         .get('/api/articles?sort_by=article_id')
@@ -192,7 +219,7 @@ describe('/api/articles', () => {
         return request(app)
           .patch('/api/articles/1')
           .send(increaseVotes)
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             expect(typeof body).toBe('object');
             expect(body.article).toEqual({
@@ -212,7 +239,7 @@ describe('/api/articles', () => {
         return request(app)
           .patch('/api/articles/1')
           .send(decreaseVotes)
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             expect(typeof body).toBe('object');
             expect(body.article).toEqual({
@@ -268,6 +295,15 @@ describe('/api/articles', () => {
                   author: expect.any(String),
                 });
               });
+            });
+        });
+
+        test('Return status code 200 which limits the return results by 4 with a default value of 10', () => {
+          return request(app)
+            .get('/api/articles/1/comments?limit=4')
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments.length).toBe(4);
             });
         });
 
@@ -370,7 +406,7 @@ describe('/api/comments/:comment_id', () => {
       return request(app)
         .patch('/api/comments/1')
         .send(increaseVotes)
-        .expect(201)
+        .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
           expect(body.comment).toEqual({
@@ -389,7 +425,7 @@ describe('/api/comments/:comment_id', () => {
       return request(app)
         .patch('/api/comments/1')
         .send(decreaseVotes)
-        .expect(201)
+        .expect(200)
         .then(({ body }) => {
           expect(typeof body).toBe('object');
           expect(body.comment).toEqual({

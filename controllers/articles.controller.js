@@ -13,7 +13,6 @@ const {
 
 exports.getArticleByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
-
   return checkArticleExists(articleId)
     .then((articleExists) => {
       if (articleExists) {
@@ -37,7 +36,7 @@ exports.patchArticleByArticleId = (req, res, next) => {
       if (articleExists) {
         return updateArticlebyArticleId(articleBody, articleId).then(
           (article) => {
-            return res.status(201).send({ article });
+            return res.status(200).send({ article });
           }
         );
       } else {
@@ -53,12 +52,16 @@ exports.getArticles = (req, res, next) => {
   const sortBy = req.query.sort_by;
   const order_by = req.query.order_by;
   const topic = req.query.topic;
+  const limit = req.query.limit;
+  const page = req.query.p;
   checkTopicExists(topic)
     .then((topicExists) => {
       if (topicExists) {
-        return selctArticles(sortBy, order_by, topic).then((articles) => {
-          return res.status(200).send({ articles });
-        });
+        return selctArticles(sortBy, order_by, topic, limit, page).then(
+          (articles) => {
+            return res.status(200).send({ articles });
+          }
+        );
       } else {
         return Promise.reject({ status: 400, msg: 'Bad request' });
       }
@@ -70,10 +73,11 @@ exports.getArticles = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
+  const limit = req.query.limit;
   return checkArticleExists(articleId)
     .then((articleExists) => {
       if (articleExists) {
-        return selectCommentsByArticleId(articleId).then((comments) => {
+        return selectCommentsByArticleId(articleId, limit).then((comments) => {
           if (comments.length) {
             return res.status(200).send({ comments });
           } else {
@@ -116,3 +120,5 @@ exports.postCommentByArticleId = (req, res, next) => {
       next(err);
     });
 };
+
+exports.postArticle = (req, res, next) => {};
