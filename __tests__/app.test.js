@@ -399,7 +399,8 @@ describe('/api/users/:username', () => {
           });
         });
     });
-    test('Return status code 400 if username is not valid', () => {
+
+    test('Return status code 404 if username is not valid', () => {
       return request(app)
         .get('/api/users/notAValidUserName')
         .expect(404)
@@ -412,39 +413,53 @@ describe('/api/users/:username', () => {
 
 describe('/api/comments/:comment_id', () => {
   describe('PATCH', () => {
-    // test('Return status code 201, increment votes by 10 and return object', () => {
-    //   const increaseVotes = { inc_votes: 1 };
-    //   return request(app)
-    //     .patch('/api/comments/1')
-    //     .send(increaseVotes)
-    //     .expect(201)
-    //     .then(({ body }) => {
-    //       expect(typeof body).toBe('object');
-    //       expect(body.comment).toEqual({
-    //         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-    //         votes: 17,
-    //         author: 'butter_bridge',
-    //         article_id: 9,
-    //         created_at: '2020-07-09T20:11:00.000Z',
-    //       });
-    //     });
-    // });
-    // test('Return status code 201, increment votes by 10 and return object', () => {
-    //   const decreaseVotes = { inc_votes: 1 };
-    //   return request(app)
-    //     .patch('/api/comments/1')
-    //     .send(decreaseVotes)
-    //     .expect(201)
-    //     .then(({ body }) => {
-    //       expect(typeof body).toBe('object');
-    //       expect(body.comment).toEqual({
-    //         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-    //         votes: 15,
-    //         author: 'butter_bridge',
-    //         article_id: 9,
-    //         created_at: '2020-07-09T20:11:00.000Z',
-    //       });
-    //     });
-    // });
+    test('Return status code 201, increment votes by 1 and return object', () => {
+      const increaseVotes = { inc_votes: 1 };
+      return request(app)
+        .patch('/api/comments/1')
+        .send(increaseVotes)
+        .expect(201)
+        .then(({ body }) => {
+          expect(typeof body).toBe('object');
+          expect(body.comment).toEqual({
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 17,
+            author: 'butter_bridge',
+            article_id: 9,
+            comment_id: 1,
+            created_at: '2020-04-06T12:17:00.000Z',
+          });
+        });
+    });
+
+    test('Return status code 201, decrement votes by 1 and return object', () => {
+      const decreaseVotes = { inc_votes: -1 };
+      return request(app)
+        .patch('/api/comments/1')
+        .send(decreaseVotes)
+        .expect(201)
+        .then(({ body }) => {
+          expect(typeof body).toBe('object');
+          expect(body.comment).toEqual({
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 15,
+            author: 'butter_bridge',
+            article_id: 9,
+            comment_id: 1,
+            created_at: '2020-04-06T12:17:00.000Z',
+          });
+        });
+    });
+
+    test('Return status code 404 if comment is not valid', () => {
+      const increaseVotes = { inc_votes: 1 };
+      return request(app)
+        .patch('/api/comments/90000')
+        .send(increaseVotes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+    });
   });
 });
