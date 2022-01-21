@@ -6,14 +6,13 @@ const {
   handlePsqlErrors,
 } = require('./errors/errors');
 const apiRouter = require('./routers/api.router');
-const { getApi } = require('./controllers/api.controller');
+const { getApi } = require('./controllers/api.controllers');
 
 const app = express();
 
 app.use(express.json());
 
 app.get('/api', getApi);
-
 app.use('/api', apiRouter);
 
 app.all('*', handle404s);

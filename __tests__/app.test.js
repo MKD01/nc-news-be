@@ -74,7 +74,6 @@ describe('/api/articles/:article_id', () => {
   describe('PATCH', () => {
     test('Return status code 201, increment votes by 10 and return object', () => {
       const increaseVotes = { inc_votes: 10 };
-
       return request(app)
         .patch('/api/articles/1')
         .send(increaseVotes)
@@ -95,7 +94,6 @@ describe('/api/articles/:article_id', () => {
 
     test('Return status code 201, decrement votes by 10 and return object', () => {
       const decreaseVotes = { inc_votes: -10 };
-
       return request(app)
         .patch('/api/articles/1')
         .send(decreaseVotes)
@@ -361,8 +359,92 @@ describe('/api', () => {
         .get('/api')
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body.data).toBe('string');
+          expect(typeof body).toBe('object');
         });
     });
+  });
+});
+
+describe('/api/users', () => {
+  describe('GET', () => {
+    test('Return status code 200 with an array of objects containing the username of each user', () => {
+      return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe('object');
+          body.users.forEach((user) => {
+            expect(user).toMatchObject({
+              username: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+});
+
+describe('/api/users/:username', () => {
+  describe('GET', () => {
+    test('Return status code 200 with an array of objects containing the username of each user', () => {
+      return request(app)
+        .get('/api/users/butter_bridge')
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe('object');
+          expect(body.user).toMatchObject({
+            username: 'butter_bridge',
+            name: 'jonny',
+            avatar_url:
+              'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg',
+          });
+        });
+    });
+    test('Return status code 400 if username is not valid', () => {
+      return request(app)
+        .get('/api/users/notAValidUserName')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+    });
+  });
+});
+
+describe('/api/comments/:comment_id', () => {
+  describe('PATCH', () => {
+    // test('Return status code 201, increment votes by 10 and return object', () => {
+    //   const increaseVotes = { inc_votes: 1 };
+    //   return request(app)
+    //     .patch('/api/comments/1')
+    //     .send(increaseVotes)
+    //     .expect(201)
+    //     .then(({ body }) => {
+    //       expect(typeof body).toBe('object');
+    //       expect(body.comment).toEqual({
+    //         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+    //         votes: 17,
+    //         author: 'butter_bridge',
+    //         article_id: 9,
+    //         created_at: '2020-07-09T20:11:00.000Z',
+    //       });
+    //     });
+    // });
+    // test('Return status code 201, increment votes by 10 and return object', () => {
+    //   const decreaseVotes = { inc_votes: 1 };
+    //   return request(app)
+    //     .patch('/api/comments/1')
+    //     .send(decreaseVotes)
+    //     .expect(201)
+    //     .then(({ body }) => {
+    //       expect(typeof body).toBe('object');
+    //       expect(body.comment).toEqual({
+    //         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+    //         votes: 15,
+    //         author: 'butter_bridge',
+    //         article_id: 9,
+    //         created_at: '2020-07-09T20:11:00.000Z',
+    //       });
+    //     });
+    // });
   });
 });
