@@ -63,3 +63,19 @@ exports.checkUserExists = (userName) => {
       }
     });
 };
+
+exports.checkValidString = (topic) => {
+  if (topic) {
+    const check = topic.split('').map((character) => {
+      if (!/[a-zA-Z]/.test(character)) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+
+    return check.every((elem) => elem === true);
+  } else {
+    return true;
+  }
+};

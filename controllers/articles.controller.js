@@ -9,6 +9,7 @@ const {
   checkArticleExists,
   checkTopicExists,
   checkAuthorExists,
+  checkValidString,
 } = require('../utils/utils');
 
 exports.getArticleByArticleId = (req, res, next) => {
@@ -54,21 +55,26 @@ exports.getArticles = (req, res, next) => {
   const topic = req.query.topic;
   const limit = req.query.limit;
   const page = req.query.p;
-  checkTopicExists(topic)
-    .then((topicExists) => {
-      if (topicExists) {
-        return selctArticles(sortBy, order_by, topic, limit, page).then(
-          (articles) => {
-            return res.status(200).send({ articles });
-          }
-        );
-      } else {
-        return Promise.reject({ status: 400, msg: 'Bad request' });
-      }
-    })
-    .catch((err) => {
-      next(err);
-    });
+
+  if (checkValidString(topic)) {
+    checkTopicExists(topic)
+      .then((topicExists) => {
+        if (topicExists) {
+          return selctArticles(sortBy, order_by, topic, limit, page).then(
+            (articles) => {
+              return res.status(200).send({ articles });
+            }
+          );
+        } else {
+          return Promise.reject({ status: 404, msg: 'Not found' });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    next({ status: 400, msg: 'Bad request' });
+  }
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -109,11 +115,11 @@ exports.postCommentByArticleId = (req, res, next) => {
               }
             );
           } else {
-            return Promise.reject({ status: 400, msg: 'Bad request' });
+            return Promise.reject({ status: 404, msg: 'Not found' });
           }
         });
       } else {
-        return Promise.reject({ status: 400, msg: 'Bad request' });
+        return Promise.reject({ status: 404, msg: 'Not found' });
       }
     })
     .catch((err) => {

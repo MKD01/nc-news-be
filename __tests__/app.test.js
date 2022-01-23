@@ -46,7 +46,7 @@ describe('/api/topics', () => {
 
 describe('/api/articles', () => {
   describe('GET', () => {
-    test('Return status code 200 and an articles array of each article', () => {
+    test('Return status code 200 and return an articles array of each article', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
@@ -67,7 +67,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 and should be sorted by date as default', () => {
+    test('Return status code 200 and return an articles array of each article sorted by date as default', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
@@ -78,7 +78,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 which limits the return results by 4 with a default value of 10', () => {
+    test('Return status code 200 and return an articles array of each article limited by 4 with a default value of 10', () => {
       return request(app)
         .get('/api/articles?limit=4&order_by=ASC')
         .expect(200)
@@ -87,7 +87,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 with an offset based on the page number', () => {
+    test('Return status code 200 and return an articles array of each article with an offset based on the page number', () => {
       return request(app)
         .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
         .expect(200)
@@ -96,16 +96,14 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 with a property  displaying the total number of articles', () => {
-      return request(app)
-        .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
-        .expect(200)
-        .then(({ body }) => {
-          // console.log(body);
-        });
-    });
+    // test('Return status code 200 and return an articles array of each article with a property displaying the total number of articles', () => {
+    //   return request(app)
+    //     .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
+    //     .expect(200)
+    //     .then(({ body }) => {});
+    // });
 
-    test('Return status code 200 and should be sorted by article_id', () => {
+    test('Return status code 200 and return an articles array of each article sorted by article_id', () => {
       return request(app)
         .get('/api/articles?sort_by=article_id')
         .expect(200)
@@ -116,7 +114,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 and should be ordered by desc as default', () => {
+    test('Return status code 200 and return an articles array of each article ordered by desc as default', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
@@ -125,7 +123,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 and should be ordered by asc', () => {
+    test('Return status code 200 and return an articles array of each article ordered by asc', () => {
       return request(app)
         .get('/api/articles?order_by=ASC')
         .expect(200)
@@ -134,7 +132,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 200 and should be a specific topic', () => {
+    test('Return status code 200 and return an articles array of each article by a specific topic', () => {
       return request(app)
         .get('/api/articles?topic=mitch')
         .expect(200)
@@ -145,7 +143,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 400 with bad request if sort by is incorrect', () => {
+    test('Return status code 400 with bad request if sort by is invalid', () => {
       return request(app)
         .get('/api/articles?sort_by=NotAColumn')
         .expect(400)
@@ -154,7 +152,7 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 400 with bad request if order by is incorrect', () => {
+    test('Return status code 400 with bad request if order by is invalid', () => {
       return request(app)
         .get('/api/articles?order_by=ASCSS')
         .expect(400)
@@ -163,7 +161,16 @@ describe('/api/articles', () => {
         });
     });
 
-    test('Return status code 400 with bad request if topic is incorrect', () => {
+    test('Return status code 404 with not found if topic is valid but does not exist', () => {
+      return request(app)
+        .get('/api/articles?topic=skadnsajkdbasbdaslbd')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Not found');
+        });
+    });
+
+    test('Return status code 400 with bad request if topic is invalid', () => {
       return request(app)
         .get('/api/articles?topic=1')
         .expect(400)
@@ -347,7 +354,7 @@ describe('/api/articles', () => {
             });
         });
 
-        test('Return status code 400 if article_id is not valid', () => {
+        test('Return status code 400 if article_id is', () => {
           const newComment = {
             username: 'butter_bridge',
             body: 'an interesting story',
@@ -361,7 +368,7 @@ describe('/api/articles', () => {
             });
         });
 
-        test('Return status code 404 if username is not valid', () => {
+        test('Return status code 404 if username does not exist', () => {
           const newComment = {
             username: 'notAUser',
             body: 'an interesting story',
@@ -369,9 +376,9 @@ describe('/api/articles', () => {
           return request(app)
             .post('/api/articles/8/comments')
             .send(newComment)
-            .expect(400)
+            .expect(404)
             .then(({ body }) => {
-              expect(body.msg).toBe('Bad request');
+              expect(body.msg).toBe('Not found');
             });
         });
       });
@@ -390,7 +397,7 @@ describe('/api/comments/:comment_id', () => {
         });
     });
 
-    test('Return status code 404 with an error message if comment_id exists', () => {
+    test('Return status code 404 with an error message if comment_id does not exists', () => {
       return request(app)
         .delete('/api/comments/300000')
         .expect(404)
