@@ -9,7 +9,7 @@ afterAll(() => db.end());
 
 describe('/api', () => {
   describe('GET', () => {
-    test('Return status code 200 and read conetents of endpoints.json', () => {
+    test('Return status code 200, conetents of the file endpoints.json should be an object', () => {
       return request(app)
         .get('/api')
         .expect(200)
@@ -175,7 +175,7 @@ describe('/api/articles', () => {
 
   describe('/api/articles/:article_id', () => {
     describe('GET', () => {
-      test('Return status code 200 and the correct comment count', () => {
+      test('Return status code 200 and a article object with a key containing the specified article with a comment count key and value', () => {
         return request(app)
           .get('/api/articles/1')
           .expect(200)
@@ -214,7 +214,7 @@ describe('/api/articles', () => {
     });
 
     describe('PATCH', () => {
-      test('Return status code 201, increment votes by 10 and return object', () => {
+      test('Return status code 201, take an object with inc_votes and a number to increment votes by and return the article object with the updated vote value', () => {
         const increaseVotes = { inc_votes: 10 };
         return request(app)
           .patch('/api/articles/1')
@@ -234,7 +234,7 @@ describe('/api/articles', () => {
           });
       });
 
-      test('Return status code 201, decrement votes by 10 and return object', () => {
+      test('Return status code 201, take an object with inc_votes and a number to decrement votes by and return the article object with the updated vote value', () => {
         const decreaseVotes = { inc_votes: -10 };
         return request(app)
           .patch('/api/articles/1')
@@ -298,21 +298,12 @@ describe('/api/articles', () => {
             });
         });
 
-        test('Return status code 200 which limits the return results by 4 with a default value of 10', () => {
+        test('Return status code 200, should recieve a parameter limit which will return results limited by 4 othwerwise a default value of 10', () => {
           return request(app)
             .get('/api/articles/1/comments?limit=4')
             .expect(200)
             .then(({ body }) => {
               expect(body.comments.length).toBe(4);
-            });
-        });
-
-        test('Return status code 400 if article_id is not valid', () => {
-          return request(app)
-            .get('/api/articles/apple/comments')
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).toBe('Bad request');
             });
         });
 
@@ -322,6 +313,15 @@ describe('/api/articles', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).toBe('Not found');
+            });
+        });
+
+        test('Return status code 400 if article_id is not valid', () => {
+          return request(app)
+            .get('/api/articles/apple/comments')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe('Bad request');
             });
         });
       });
