@@ -221,7 +221,7 @@ describe('/api/articles', () => {
     });
 
     describe('PATCH', () => {
-      test('Return status code 201, take an object with inc_votes and a number to increment votes by and return the article object with the updated vote value', () => {
+      test('Return status code 200, take an object with inc_votes and a number to increment votes by and return the article object with the updated vote value', () => {
         const increaseVotes = { inc_votes: 10 };
         return request(app)
           .patch('/api/articles/1')
@@ -241,7 +241,7 @@ describe('/api/articles', () => {
           });
       });
 
-      test('Return status code 201, take an object with inc_votes and a number to decrement votes by and return the article object with the updated vote value', () => {
+      test('Return status code 200, take an object with inc_votes and a number to decrement votes by and return the article object with the updated vote value', () => {
         const decreaseVotes = { inc_votes: -10 };
         return request(app)
           .patch('/api/articles/1')
@@ -405,10 +405,19 @@ describe('/api/comments/:comment_id', () => {
           expect(body.msg).toBe('Not found');
         });
     });
+
+    test('Return status code 400 with an error message if comment_id is invalid', () => {
+      return request(app)
+        .delete('/api/comments/apple')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
   });
 
   describe('PATCH', () => {
-    test('Return status code 201, increment votes by 1 and return object', () => {
+    test('Return status code 200, increment votes by 1 and return object', () => {
       const increaseVotes = { inc_votes: 1 };
       return request(app)
         .patch('/api/comments/1')
@@ -427,7 +436,7 @@ describe('/api/comments/:comment_id', () => {
         });
     });
 
-    test('Return status code 201, decrement votes by 1 and return object', () => {
+    test('Return status code 200, decrement votes by 1 and return object', () => {
       const decreaseVotes = { inc_votes: -1 };
       return request(app)
         .patch('/api/comments/1')
@@ -446,7 +455,7 @@ describe('/api/comments/:comment_id', () => {
         });
     });
 
-    test('Return status code 404 if comment is not valid', () => {
+    test('Return status code 404 if comment is valid but does not exist', () => {
       const increaseVotes = { inc_votes: 1 };
       return request(app)
         .patch('/api/comments/90000')
@@ -454,6 +463,17 @@ describe('/api/comments/:comment_id', () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe('Not found');
+        });
+    });
+
+    test('Return status code 400 with an error message if comment_id is invalid', () => {
+      const increaseVotes = { inc_votes: 1 };
+      return request(app)
+        .patch('/api/comments/apple')
+        .send(increaseVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
         });
     });
   });

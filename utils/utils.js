@@ -64,9 +64,9 @@ exports.checkUserExists = (userName) => {
     });
 };
 
-exports.checkValidString = (topic) => {
-  if (topic) {
-    const check = topic.split('').map((character) => {
+exports.checkValidString = (string) => {
+  if (string) {
+    const check = string.split('').map((character) => {
       if (!/[a-zA-Z]/.test(character)) {
         return false;
       } else {
@@ -78,4 +78,16 @@ exports.checkValidString = (topic) => {
   } else {
     return true;
   }
+};
+
+exports.checkValidNumber = (number) => {
+  const check = number.split('').map((character) => {
+    if (!/^\d+$/.test(character)) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+
+  return check.every((elem) => elem === true);
 };
