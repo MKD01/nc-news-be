@@ -283,6 +283,15 @@ describe('/api/articles', () => {
             expect(body.msg).toBe('Bad request');
           });
       });
+
+      test('Return status code 400 with error message if inc_votes is missing', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Bad request');
+          });
+      });
     });
 
     describe('/api/articles/:article_id/comments', () => {
@@ -471,6 +480,26 @@ describe('/api/comments/:comment_id', () => {
       return request(app)
         .patch('/api/comments/apple')
         .send(increaseVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
+
+    test('Return status code 400 with an error message if inc_votes is invalid', () => {
+      const increaseVotes = { inc_votes: 'apple' };
+      return request(app)
+        .patch('/api/comments/1')
+        .send(increaseVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe('Bad request');
+        });
+    });
+
+    test('Return status code 400 with error message if inc_votes is missing', () => {
+      return request(app)
+        .patch('/api/comments/1')
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe('Bad request');

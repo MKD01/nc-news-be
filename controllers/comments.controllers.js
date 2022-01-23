@@ -28,8 +28,11 @@ exports.deleteCommentByCommentId = (req, res, next) => {
 exports.patchCommentByCommentId = (req, res, next) => {
   const commentId = req.params.comment_id;
   const articleBody = req.body.inc_votes;
-
-  if (checkValidNumber(commentId)) {
+  if (
+    articleBody &&
+    typeof articleBody === 'number' &&
+    checkValidNumber(commentId)
+  ) {
     return checkCommentExists(commentId)
       .then((commentExists) => {
         if (commentExists) {

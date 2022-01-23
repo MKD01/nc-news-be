@@ -32,21 +32,25 @@ exports.getArticleByArticleId = (req, res, next) => {
 exports.patchArticleByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
   const articleBody = req.body.inc_votes;
-  return checkArticleExists(articleId)
-    .then((articleExists) => {
-      if (articleExists) {
-        return updateArticlebyArticleId(articleBody, articleId).then(
-          (article) => {
-            return res.status(200).send({ article });
-          }
-        );
-      } else {
-        return Promise.reject({ status: 404, msg: 'Not found' });
-      }
-    })
-    .catch((err) => {
-      next(err);
-    });
+  if (articleBody) {
+    return checkArticleExists(articleId)
+      .then((articleExists) => {
+        if (articleExists) {
+          return updateArticlebyArticleId(articleBody, articleId).then(
+            (article) => {
+              return res.status(200).send({ article });
+            }
+          );
+        } else {
+          return Promise.reject({ status: 404, msg: 'Not found' });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    next({ status: 400, msg: 'Bad request' });
+  }
 };
 
 exports.getArticles = (req, res, next) => {
