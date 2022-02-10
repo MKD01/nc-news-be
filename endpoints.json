@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "Returns an array of all topics",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order_by"],
     "exampleResponse": {
       "articles": [
         {
@@ -67,7 +67,7 @@
     "queries": [],
     "params": { "article_id": 1 },
     "exampleResponse": {
-      "article": [
+      "comments": [
         {
           "comment_id": 1,
           "votes": 100,
@@ -87,7 +87,7 @@
       "body": "an interesting story"
     },
     "exampleResponse": {
-      "article": {
+      "comment": {
         "comment_id": 50,
         "votes": 0,
         "author": "butter_bridge",
