@@ -78,7 +78,7 @@ exports.updateArticlebyArticleId = (articleBody, articleId) => {
 exports.selectCommentsByArticleId = (articleId, limit = 10) => {
   return db
     .query(
-      `SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT ${limit};`,
+      `SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1 ORDER BY created_at ASC LIMIT ${limit};`,
       [articleId]
     )
     .then((result) => {
