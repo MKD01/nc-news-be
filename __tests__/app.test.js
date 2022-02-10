@@ -96,13 +96,6 @@ describe('/api/articles', () => {
         });
     });
 
-    // test('Return status code 200 and return an articles array of each article with a property displaying the total number of articles', () => {
-    //   return request(app)
-    //     .get('/api/articles?limit=4&p=2&sort_by=article_id&order_by=ASC')
-    //     .expect(200)
-    //     .then(({ body }) => {});
-    // });
-
     test('Return status code 200 and return an articles array of each article sorted by article_id', () => {
       return request(app)
         .get('/api/articles?sort_by=article_id')
