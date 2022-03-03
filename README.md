@@ -6,7 +6,7 @@
 
 ## **Back-End**
 
-- Back-end - Hosted link: https://lee-nc-news.herokuapp.com/
+- Back-end - Hosted link: https://github.com/MKD01/nc-news-be
 
 ## **Front-End**
 
