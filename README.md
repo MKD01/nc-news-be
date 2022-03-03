@@ -11,7 +11,7 @@
 ## **Front-End**
 
 - Front-End - Hosted link: https://fe-nc-news-app.netlify.app/
-- Front-End - Github link: --- link ---
+- Front-End - Github link: https://mkd-nc-news.netlify.app/
 
 ---
 
