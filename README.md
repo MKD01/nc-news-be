@@ -1,6 +1,6 @@
 # **NorthCoders News API**
 
-# **Build By Mohammed Kabir Dastgir**
+# **Built By Mohammed Kabir Dastgir**
 
 ---
 
