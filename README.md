@@ -33,6 +33,7 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 ### **Application dependencies:**
 
 <i>
+  
 - npm 8.x
 - cors: 2.x
 - dotenv 14.x
