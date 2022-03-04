@@ -6,7 +6,7 @@
 
 ## **Back-End**
 
-- Back-end - Hosted link: https://github.com/MKD01/nc-news-be
+- Back-end - Hosted link: https://mkd-nc-news.herokuapp.com/api
 
 ## **Front-End**
 
