@@ -57,7 +57,7 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 - In your teminal:
 
 ```
-$ git clone https://github.com/leekli/nc-news.git
+$ git clone 
 $ cd nc-news
 ```
 
