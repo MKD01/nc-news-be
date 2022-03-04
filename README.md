@@ -71,7 +71,7 @@ $ npm install
 
 ### **Environment setup:**
 
-- You will need to create _two_ `.env` files for the app: `.env.test` and `.env.development`. Into each, add `PGDATABASE=<database_name_here>`, with the correct database name for both dev and test environments.
+- You will need to create _two_ `.env` files for the app: `.env.test` and `.env.development`. Into each, add `PGDATABASE = nc_news` for the `.env.development` file and `PGDATABASE = nc_news_test` for the `.env.test` file.
 
 ### **Database set-up and seeding:**
 
