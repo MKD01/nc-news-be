@@ -1,17 +1,17 @@
 # **NorthCoders News API**
 
-# **Build By Mohammed Kabir Dastgir**
+# **Built By Mohammed Kabir Dastgir**
 
 ---
 
 ## **Back-End**
 
-- Back-end - Hosted link: https://lee-nc-news.herokuapp.com/
+- Back-end - Hosted link: https://mkd-nc-news.herokuapp.com/api
 
 ## **Front-End**
 
 - Front-End - Hosted link: https://fe-nc-news-app.netlify.app/
-- Front-End - Github link: https://github.com/leekli/fe-nc-news
+- Front-End - Github link: https://github.com/MKD01/nc-news
 
 ---
 
@@ -33,6 +33,7 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 ### **Application dependencies:**
 
 <i>
+  
 - npm 8.x
 - cors: 2.x
 - dotenv 14.x
@@ -56,7 +57,7 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 - In your teminal:
 
 ```
-$ git clone https://github.com/leekli/nc-news.git
+$ git clone https://github.com/MKD01/nc-news-be.git
 $ cd nc-news
 ```
 
