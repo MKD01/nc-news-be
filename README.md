@@ -63,7 +63,7 @@ $ cd nc-news
 
 ### **Installing dependencies:**
 
-- Initialising Node by installing the required dependencies from `package.json`. In your teminal:
+- Initialising Node by installing the required dependencies from `package.json`. In your terminal:
 
 ```
 $ npm install
