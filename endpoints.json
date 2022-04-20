@@ -44,7 +44,7 @@
       }
     }
   },
-  "PATCH /api/articles/:article_id": {
+  "PATCH /api/articles/article_id": {
     "description": "Updates the votes property of the article object using article_id",
     "queries": [],
     "params": { "article_id": 1 },
@@ -119,7 +119,7 @@
       ]
     }
   },
-  "GET /api/users/:username": {
+  "GET /api/users/username": {
     "description": "Returns an object using usersnames",
     "queries": [],
     "exampleResponse": {
