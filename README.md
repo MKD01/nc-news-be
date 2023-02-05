@@ -30,27 +30,9 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 - Node.js 17.x
 - Postgres 14.x
 
-### **Application dependencies:**
+### **dependencies:**
 
-<i>
-  
-- npm 8.x
-- cors: 2.x
-- dotenv 14.x
-- express 4.x
-- pg 8.x
-- pg-format 1.x
-  </i>
-
-### **Developer only dependencies:**
-
-<i>
-
-- jest 27.x
-- jest-extended: 1.x
-- jest-sorted 1.x
-- supertest 6.x
-  </i>
+Application dependencies and versions can be found in the package.json file.
 
 ### **Cloning the repositry:**
 
@@ -88,5 +70,5 @@ $ npm run seed
 - To run tests:
 
 ```
-$ npm test
+$ npm run test
 ```
