@@ -27,7 +27,7 @@
       ]
     }
   },
-  "GET /api/articles/article_id": {
+  "GET /api/articles/:article_id": {
     "description": "Returns an article object using article_id",
     "queries": [],
     "params": { "article_id": 1 },
@@ -44,7 +44,7 @@
       }
     }
   },
-  "PATCH /api/articles/article_id": {
+  "PATCH /api/articles/:article_id": {
     "description": "Updates the votes property of the article object using article_id",
     "queries": [],
     "params": { "article_id": 1 },
@@ -62,7 +62,7 @@
       }
     }
   },
-  "GET /api/articles/article_id/comments": {
+  "GET /api/articles/:article_id/comments": {
     "description": "Returns an array of all the comments using article_id",
     "queries": [],
     "params": { "article_id": 1 },
@@ -78,7 +78,7 @@
       ]
     }
   },
-  "POST /api/articles/article_id/comments": {
+  "POST /api/articles/:article_id/comments": {
     "description": "Creates a new comment using username, body and article_id",
     "queries": [],
     "params": { "article_id": 1 },
@@ -96,7 +96,7 @@
       }
     }
   },
-  "DELETE /api/comments/comment_id": {
+  "DELETE /api/comments/:comment_id": {
     "description": "Deletes a comment using comment_id",
     "queries": [],
     "params": { "comment_id": 50 },
@@ -119,9 +119,10 @@
       ]
     }
   },
-  "GET /api/users/username": {
+  "GET /api/users/:username": {
     "description": "Returns an object using usersnames",
     "queries": [],
+    "params": { "username": "tickle122" },
     "exampleResponse": {
       "user": {
         "username": "tickle122",
