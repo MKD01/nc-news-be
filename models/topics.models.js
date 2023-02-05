@@ -1,7 +1,17 @@
-const db = require('../db/connection');
+const db = require("../db/connection");
 
 exports.selectTopics = () => {
-  return db.query(`SELECT * FROM topics`).then((result) => {
-    return result.rows;
+  return db.query(`SELECT * FROM topics`).then(({ rows }) => {
+    return rows;
   });
+};
+
+exports.selectTopicByName = (topic) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+    });
 };

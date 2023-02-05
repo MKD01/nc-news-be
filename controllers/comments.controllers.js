@@ -1,54 +1,33 @@
 const {
   removeCommentByCommentId,
-  updateCommentbyCommentId,
-} = require('../models/comments.models');
-const { checkCommentExists, checkValidNumber } = require('../utils/utils');
+  updateCommentByCommentId,
+  selectCommentByCommentId,
+} = require("../models/comments.models");
 
 exports.deleteCommentByCommentId = (req, res, next) => {
   const commentId = req.params.comment_id;
-  if (checkValidNumber(commentId)) {
-    return checkCommentExists(commentId)
-      .then((commentExists) => {
-        if (commentExists) {
-          return removeCommentByCommentId(commentId).then(() => {
-            res.status(204).send({});
-          });
-        } else {
-          return Promise.reject({ status: 404, msg: 'Not found' });
-        }
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else {
-    next({ status: 400, msg: 'Bad request' });
-  }
+
+  removeCommentByCommentId(commentId)
+    .then(() => {
+      res.status(204).send({});
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.patchCommentByCommentId = (req, res, next) => {
-  const commentId = req.params.comment_id;
-  const articleBody = req.body.inc_votes;
-  if (
-    articleBody &&
-    typeof articleBody === 'number' &&
-    checkValidNumber(commentId)
-  ) {
-    return checkCommentExists(commentId)
-      .then((commentExists) => {
-        if (commentExists) {
-          return updateCommentbyCommentId(articleBody, commentId).then(
-            (comment) => {
-              return res.status(200).send({ comment });
-            }
-          );
-        } else {
-          return Promise.reject({ status: 404, msg: 'Not found' });
-        }
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else {
-    next({ status: 400, msg: 'Bad request' });
-  }
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  Promise.all([
+    selectCommentByCommentId(comment_id),
+    updateCommentByCommentId(inc_votes, comment_id),
+  ])
+    .then(([_, comment]) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
