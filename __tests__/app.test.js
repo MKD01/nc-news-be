@@ -17,13 +17,15 @@ describe("/api", () => {
           expect(body).toHaveProperty("GET /api");
           expect(body).toHaveProperty("GET /api/topics");
           expect(body).toHaveProperty("GET /api/articles");
-          expect(body).toHaveProperty("GET /api/articles/article_id");
-          expect(body).toHaveProperty("PATCH /api/articles/article_id");
-          expect(body).toHaveProperty("GET /api/articles/article_id/comments");
-          expect(body).toHaveProperty("POST /api/articles/article_id/comments");
-          expect(body).toHaveProperty("DELETE /api/comments/comment_id");
+          expect(body).toHaveProperty("GET /api/articles/:article_id");
+          expect(body).toHaveProperty("PATCH /api/articles/:article_id");
+          expect(body).toHaveProperty("GET /api/articles/:article_id/comments");
+          expect(body).toHaveProperty(
+            "POST /api/articles/:article_id/comments"
+          );
+          expect(body).toHaveProperty("DELETE /api/comments/:comment_id");
           expect(body).toHaveProperty("GET /api/users");
-          expect(body).toHaveProperty("GET /api/users/username");
+          expect(body).toHaveProperty("GET /api/users/:username");
         });
     });
   });
@@ -43,6 +45,52 @@ describe("/api/topics", () => {
               description: expect.any(String),
             });
           });
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("Return status code 201 and the created topic", () => {
+      const newTopic = {
+        slug: "Movies",
+        description: "Best Movies",
+      };
+
+      return request(app)
+        .post("/api/topics")
+        .send(newTopic)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.topic).toEqual(newTopic);
+        });
+    });
+
+    test("Return status code 400 when there is a missing property in the given body", () => {
+      const newTopic = {
+        slug: "Movies",
+      };
+
+      return request(app)
+        .post("/api/topics")
+        .send(newTopic)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
+        });
+    });
+
+    test("Return status code 400 when given a topic slug that already exists", () => {
+      const newTopic = {
+        slug: "cats",
+        description: "...",
+      };
+
+      return request(app)
+        .post("/api/topics")
+        .send(newTopic)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
         });
     });
   });
@@ -199,6 +247,124 @@ describe("/api/articles", () => {
       test("Return status code 400 if p is invalid", () => {
         return request(app)
           .get("/api/articles?p=test")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
+    });
+  });
+
+  describe("POST", () => {
+    test("Return status code 201 with the new comment", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        body: "an interesting story",
+        title: "an interesting title",
+        topic: "mitch",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/600px-Rocket_League_coverart.jpg",
+      };
+
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).toMatchObject({
+            article_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            comment_count: expect.any(String),
+            ...newArticle,
+          });
+        });
+    });
+
+    test("Return status code 201 with the new comment, and when not given a article_img_url the default value should be used instead", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        body: "an interesting story",
+        title: "an interesting title",
+        topic: "mitch",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article).toMatchObject({
+            article_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            comment_count: expect.any(String),
+            article_img_url: expect.any(String),
+            ...newArticle,
+          });
+        });
+    });
+
+    test("Return status code 400 if a property is missing from the provided body", () => {
+      const newArticle = {
+        author: "butter_bridge",
+        topic: "mitch",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/600px-Rocket_League_coverart.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+
+    test("Return status code 404 if author does not exist", () => {
+      const newArticle = {
+        author: "NotAValidAuthor",
+        body: "an interesting story",
+        title: "an interesting title",
+        topic: "mitch",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/600px-Rocket_League_coverart.jpg",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(newArticle)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    describe("DELETE", () => {
+      test("Returns status code 204 after removing the specified article by its id", () => {
+        return request(app)
+          .delete("/api/articles/1")
+          .expect(204)
+          .then(() => {
+            return request(app)
+              .delete("/api/articles/1")
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Not found");
+              });
+          });
+      });
+
+      test("Return status code 404 if the article_id does not exists", () => {
+        return request(app)
+          .delete("/api/articles/300000")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not found");
+          });
+      });
+
+      test("Return status code 400 if the article_id is invalid", () => {
+        return request(app)
+          .delete("/api/articles/apple")
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("Bad request");
@@ -421,63 +587,63 @@ describe("/api/articles", () => {
               expect(body.msg).toBe("Bad request");
             });
         });
-      });
 
-      describe("Pagination", () => {
-        test("Return status code 200 and an array of comments limited by 10 by default", () => {
-          return request(app)
-            .get("/api/articles/1/comments")
-            .expect(200)
-            .then(({ body }) => {
-              expect(body.comments.length).toBe(10);
-            });
-        });
+        describe("Pagination", () => {
+          test("Return status code 200 and an array of comments limited by 10 by default", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments.length).toBe(10);
+              });
+          });
 
-        test("Return status code 200 and an array of comments limited by 4", () => {
-          return request(app)
-            .get("/api/articles/1/comments?limit=4")
-            .expect(200)
-            .then(({ body }) => {
-              expect(body.comments.length).toBe(4);
-            });
-        });
+          test("Return status code 200 and an array of comments limited by 4", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=4")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments.length).toBe(4);
+              });
+          });
 
-        test("Return status code 200 and an array of comments with an offset based on the page number and limit", () => {
-          return request(app)
-            .get("/api/articles/1/comments?limit=4&p=2")
-            .expect(200)
-            .then(({ body }) => {
-              const firstRequestedArticle = body.comments[0].comment_id;
+          test("Return status code 200 and an array of comments with an offset based on the page number and limit", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=4&p=2")
+              .expect(200)
+              .then(({ body }) => {
+                const firstRequestedArticle = body.comments[0].comment_id;
 
-              return request(app)
-                .get("/api/articles/1/comments?limit=4&p=1")
-                .expect(200)
-                .then(({ body }) => {
-                  const secondRequestedArticle = body.comments[0].comment_id;
+                return request(app)
+                  .get("/api/articles/1/comments?limit=4&p=1")
+                  .expect(200)
+                  .then(({ body }) => {
+                    const secondRequestedArticle = body.comments[0].comment_id;
 
-                  expect(firstRequestedArticle).not.toBe(
-                    secondRequestedArticle
-                  );
-                });
-            });
-        });
+                    expect(firstRequestedArticle).not.toBe(
+                      secondRequestedArticle
+                    );
+                  });
+              });
+          });
 
-        test("Return status code 400 if limit is invalid", () => {
-          return request(app)
-            .get("/api/articles/1/comments?limit=test")
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).toBe("Bad request");
-            });
-        });
+          test("Return status code 400 if limit is invalid", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=test")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Bad request");
+              });
+          });
 
-        test("Return status code 400 if p is invalid", () => {
-          return request(app)
-            .get("/api/articles/1/comments?p=test")
-            .expect(400)
-            .then(({ body }) => {
-              expect(body.msg).toBe("Bad request");
-            });
+          test("Return status code 400 if p is invalid", () => {
+            return request(app)
+              .get("/api/articles/1/comments?p=test")
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).toBe("Bad request");
+              });
+          });
         });
       });
 
@@ -505,10 +671,9 @@ describe("/api/articles", () => {
         test("Return status code 400 if a property is missing from the provided body", () => {
           const newComment = {
             username: "butter_bridge",
-            body: "an interesting story",
           };
           return request(app)
-            .post("/api/articles/apple/comments")
+            .post("/api/articles/1/comments")
             .send(newComment)
             .expect(400)
             .then(({ body }) => {
@@ -522,7 +687,35 @@ describe("/api/articles", () => {
             body: "an interesting story",
           };
           return request(app)
-            .post("/api/articles/8/comments")
+            .post("/api/articles/1/comments")
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Not found");
+            });
+        });
+
+        test("Return status code 400 if the article id is invalid", () => {
+          const newComment = {
+            username: "butter_bridge",
+            body: "an interesting story",
+          };
+          return request(app)
+            .post("/api/articles/apple/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Bad request");
+            });
+        });
+
+        test("Return status code 404 if the article id is valid but does not exist", () => {
+          const newComment = {
+            username: "butter_bridge",
+            body: "an interesting story",
+          };
+          return request(app)
+            .post("/api/articles/999/comments")
             .send(newComment)
             .expect(404)
             .then(({ body }) => {
@@ -569,7 +762,6 @@ describe("/api/comments/:comment_id", () => {
     });
   });
 
-  // Need to implement on front end and add to enpoints.json
   describe("PATCH", () => {
     test("Return status code 200 and increment votes by 1 of the speicified comment", () => {
       const increaseVotes = { inc_votes: 1 };

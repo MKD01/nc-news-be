@@ -4,7 +4,10 @@ const {
   selctArticles,
   selectCommentsByArticleId,
   createCommentArticleId,
+  createArticle,
+  removeArticleByArticleId,
 } = require("../models/articles.models");
+const { removeCommentByArticleId } = require("../models/comments.models");
 const { selectTopicByName } = require("../models/topics.models");
 const { selectUsersByUsername } = require("../models/users.models");
 
@@ -86,4 +89,35 @@ exports.postCommentByArticleId = (req, res, next) => {
     });
 };
 
-// exports.postArticle = (req, res, next) => {};
+exports.postArticle = (req, res, next) => {
+  const { author, body, title, topic, article_img_url } = req.body;
+
+  Promise.all([
+    selectUsersByUsername(author),
+    createArticle(author, body, title, topic, article_img_url),
+  ])
+    .then(([_, { article_id }]) => {
+      return selectArticleByArticleId(article_id);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+
+  Promise.all([
+    removeCommentByArticleId(article_id),
+    removeArticleByArticleId(article_id),
+  ])
+    .then(() => {
+      res.status(204).send({});
+    })
+    .catch((err) => {
+      next(err);
+    });
+};

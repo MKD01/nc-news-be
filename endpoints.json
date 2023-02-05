@@ -9,6 +9,20 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "Creates a new topic using the provided slug and description",
+    "queries": [],
+    "body": {
+      "slug": "Movies",
+      "description": "Best Movies"
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "Movies",
+        "description": "Best Movies"
+      }
+    }
+  },
   "GET /api/articles": {
     "description": "Returns an array of all articles",
     "queries": ["topic", "sort_by", "order_by"],
@@ -25,6 +39,30 @@
           "comment_count": 11
         }
       ]
+    }
+  },
+  "POST /api/articles": {
+    "description": "Creates a new article using the provided author, body, title, topic and article_img_url (which article_img_url is optional)",
+    "queries": [],
+    "body": {
+      "author": "butter_bridge",
+      "body": "an interesting story",
+      "title": "an interesting title",
+      "topic": "mitch",
+      "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/600px-Rocket_League_coverart.jpg"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "votes": 11,
+        "author": "butter_bridge",
+        "body": "an interesting story",
+        "title": "an interesting title",
+        "topic": "mitch",
+        "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rocket_League_coverart.jpg/600px-Rocket_League_coverart.jpg",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "comment_count": "23"
+      }
     }
   },
   "GET /api/articles/:article_id": {

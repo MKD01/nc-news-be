@@ -2,7 +2,7 @@ const express = require("express");
 const articleRouter = require("./article.router");
 const userRouter = require("./user.router");
 const commentRouter = require("./comment.router");
-const { getTopics } = require("../controllers/topics.controllers");
+const { getTopics, postTopics } = require("../controllers/topics.controllers");
 const {
   getArticles,
   postArticle,
@@ -12,9 +12,10 @@ const { getUsers } = require("../controllers/users.controllers");
 const apiRouter = express.Router();
 
 apiRouter.get("/topics", getTopics);
+apiRouter.post("/topics", postTopics);
 
 apiRouter.get("/articles", getArticles);
-// apiRouter.post("articles", postArticle);
+apiRouter.post("/articles", postArticle);
 apiRouter.use("/articles", articleRouter);
 
 apiRouter.get("/users", getUsers);

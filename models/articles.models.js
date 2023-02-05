@@ -103,3 +103,33 @@ exports.createCommentArticleId = (username, body, articleId) => {
       return rows[0];
     });
 };
+
+exports.createArticle = (author, body, title, topic, article_img_url) => {
+  let queryStr = `INSERT INTO articles (author, body, title, topic`;
+  const queryArr = [author, body, title, topic];
+
+  if (article_img_url !== undefined) {
+    queryStr += `, article_img_url`;
+    queryArr.push(article_img_url);
+  }
+
+  queryStr += `) VALUES ($1, $2, $3, $4 ${
+    article_img_url !== undefined ? `, $5` : ""
+  }) RETURNING *`;
+
+  return db.query(queryStr, queryArr).then(({ rows }) => {
+    return rows[0];
+  });
+};
+
+exports.removeArticleByArticleId = (article_id) => {
+  return db
+    .query(`DELETE FROM articles WHERE article_id = $1 RETURNING *`, [
+      article_id,
+    ])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+    });
+};
