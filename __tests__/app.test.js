@@ -4,8 +4,12 @@ const request = require("supertest");
 const testData = require("../db/data/test-data/index.js");
 const seed = require("../db/seeds/seed.js");
 
-beforeEach(() => seed(testData));
-afterAll(() => db.end());
+beforeEach(() => {
+  return seed(testData);
+});
+afterAll(() => {
+  return db.end();
+});
 
 describe("/api", () => {
   describe("GET", () => {
@@ -25,6 +29,7 @@ describe("/api", () => {
           );
           expect(body).toHaveProperty("DELETE /api/comments/:comment_id");
           expect(body).toHaveProperty("GET /api/users");
+          expect(body).toHaveProperty("POST /api/users");
           expect(body).toHaveProperty("GET /api/users/:username");
         });
     });
@@ -852,11 +857,61 @@ describe("/api/users", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.users.length).toBeGreaterThan(0);
+
           body.users.forEach((user) => {
             expect(user).toMatchObject({
               username: expect.any(String),
             });
           });
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("Return status code 201 and the created user", () => {
+      const newUser = {
+        username: "mkd",
+        name: "mohammed",
+        avatar_url: "www.example.com/mkd.png",
+      };
+
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.user).toEqual(newUser);
+        });
+    });
+
+    test("Return status code 400 when there is a missing property in the given body", () => {
+      const newUser = {
+        username: "mkd",
+        avatar_url: "www.example.com/mkd.png",
+      };
+
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
+        });
+    });
+
+    test("Return status code 400 when given a username that already exists", () => {
+      const newUser = {
+        username: "butter_bridge",
+        name: "butter",
+        avatar_url: "www.example.com/butter.png",
+      };
+
+      return request(app)
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual("Bad request");
         });
     });
   });

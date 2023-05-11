@@ -170,6 +170,22 @@
       ]
     }
   },
+  "POST /api/users": {
+    "description": "Creates a new user using the provided username, name and optionally avatar_url",
+    "queries": [],
+    "body": {
+      "username": "mkd",
+      "name": "mohammed",
+      "avatar_url": "https://pic.onlinewebfonts.com/svg/img_264570.png"
+    },
+    "exampleResponse": {
+      "comment": {
+        "username": "mkd",
+        "name": "mohammed",
+        "avatar_url": "https://pic.onlinewebfonts.com/svg/img_264570.png"
+      }
+    }
+  },
   "GET /api/users/:username": {
     "description": "Returns the specified user",
     "queries": [],

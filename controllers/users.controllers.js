@@ -1,6 +1,7 @@
 const {
   selectUsers,
   selectUsersByUsername,
+  createUser,
 } = require("../models/users.models");
 
 exports.getUsers = (req, res, next) => {
@@ -23,4 +24,15 @@ exports.getUsersByUsername = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postUser = async (req, res, next) => {
+  try {
+    const { username, name, avatar_url } = req.body;
+    const newUser = await createUser(username, name, avatar_url);
+
+    res.status(201).send({ user: newUser });
+  } catch (err) {
+    next(err);
+  }
 };

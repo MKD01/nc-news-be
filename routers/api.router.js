@@ -7,7 +7,7 @@ const {
   getArticles,
   postArticle,
 } = require("../controllers/articles.controller");
-const { getUsers } = require("../controllers/users.controllers");
+const { getUsers, postUser } = require("../controllers/users.controllers");
 
 const apiRouter = express.Router();
 
@@ -19,6 +19,7 @@ apiRouter.post("/articles", postArticle);
 apiRouter.use("/articles", articleRouter);
 
 apiRouter.get("/users", getUsers);
+apiRouter.post("/users", postUser);
 apiRouter.use("/users", userRouter);
 
 apiRouter.use("/comments", commentRouter);
