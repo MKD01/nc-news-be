@@ -6,7 +6,7 @@
 
 ## **Back-End**
 
-- Back-end - Hosted link: https://mkd-nc-news.herokuapp.com/api
+- Back-end - Hosted link: https://mkd-nc-news.onrender.com/api
 
 ## **Front-End**
 
