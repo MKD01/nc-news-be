@@ -118,6 +118,7 @@ describe("/api/articles", () => {
               author: expect.any(String),
               topic: expect.any(String),
               created_at: expect.any(String),
+              article_img_url: expect.any(String),
               comment_count: expect.any(String),
             });
           });
@@ -393,6 +394,7 @@ describe("/api/articles", () => {
               author: expect.any(String),
               topic: expect.any(String),
               created_at: expect.any(String),
+              article_img_url: expect.any(String),
               comment_count: expect.any(String),
             });
           });
