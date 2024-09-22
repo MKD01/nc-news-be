@@ -25,12 +25,12 @@ you can view the API endpoints in the `endpoints.json` file or by going to https
 
 # **Setup / Installation Instructions**
 
-### **requirements:**
+### **Requirements:**
 
 - Node.js 17.x
 - Postgres 14.x
 
-### **dependencies:**
+### **Dependencies:**
 
 Application dependencies and versions can be found in the package.json file.
 
