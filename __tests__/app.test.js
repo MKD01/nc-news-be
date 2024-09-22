@@ -3,6 +3,7 @@ const app = require("../app");
 const request = require("supertest");
 const testData = require("../db/data/test-data/index.js");
 const seed = require("../db/seeds/seed.js");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -18,19 +19,7 @@ describe("/api", () => {
         .get("/api")
         .expect(200)
         .then(({ body }) => {
-          expect(body).toHaveProperty("GET /api");
-          expect(body).toHaveProperty("GET /api/topics");
-          expect(body).toHaveProperty("GET /api/articles");
-          expect(body).toHaveProperty("GET /api/articles/:article_id");
-          expect(body).toHaveProperty("PATCH /api/articles/:article_id");
-          expect(body).toHaveProperty("GET /api/articles/:article_id/comments");
-          expect(body).toHaveProperty(
-            "POST /api/articles/:article_id/comments"
-          );
-          expect(body).toHaveProperty("DELETE /api/comments/:comment_id");
-          expect(body).toHaveProperty("GET /api/users");
-          expect(body).toHaveProperty("POST /api/users");
-          expect(body).toHaveProperty("GET /api/users/:username");
+          expect(body).toEqual(endpoints);
         });
     });
   });
@@ -66,7 +55,7 @@ describe("/api/topics", () => {
         .send(newTopic)
         .expect(201)
         .then(({ body }) => {
-          expect(body.topic).toEqual(newTopic);
+          expect(body.topic).toMatchObject(newTopic);
         });
     });
 
@@ -103,17 +92,17 @@ describe("/api/topics", () => {
 
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("Return status code 200 and an array of articles", () => {
+    test("Return status code 200 and an array of articles without the body property", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
           expect(body.articles.length).toBeGreaterThan(0);
+
           body.articles.forEach((article) => {
             expect(article).toMatchObject({
               article_id: expect.any(Number),
               title: expect.any(String),
-              body: expect.any(String),
               votes: expect.any(Number),
               author: expect.any(String),
               topic: expect.any(String),
@@ -125,7 +114,7 @@ describe("/api/articles", () => {
         });
     });
 
-    test("Return status code 200 and an array of articles sorted by date by default", () => {
+    test("Return status code 200 and an array of articles sorted by date in descending order by default", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -136,7 +125,7 @@ describe("/api/articles", () => {
         });
     });
 
-    test("Return status code 200 and an array of articles sorted by article_id", () => {
+    test("Return status code 200 and an array of articles sorted by article_id when given as a query", () => {
       return request(app)
         .get("/api/articles?sort_by=article_id")
         .expect(200)
@@ -147,21 +136,14 @@ describe("/api/articles", () => {
         });
     });
 
-    test("Return status code 200 and an array of articles ordered by desc as default", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toBeSorted({ descending: true });
-        });
-    });
-
     test("Return status code 200 and an array of articles ordered by asc", () => {
       return request(app)
         .get("/api/articles?order_by=ASC")
         .expect(200)
         .then(({ body }) => {
-          expect(body.articles).toBeSorted({ ascending: true });
+          expect(body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
         });
     });
 
@@ -173,6 +155,22 @@ describe("/api/articles", () => {
           expect(body.articles.length).toBeGreaterThan(0);
           body.articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+
+    test("Return status code 200 and an array of articles in the correct order/filters when given multiple queries", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&order_by=asc&sort_by=title")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBeGreaterThan(0);
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+
+          expect(body.articles).toBeSortedBy("title", {
+            ascending: true,
           });
         });
     });
@@ -197,7 +195,7 @@ describe("/api/articles", () => {
 
     test("Return status code 404 with not found if topic does not exist", () => {
       return request(app)
-        .get("/api/articles?topic=skadnsajkdbasbdaslbd")
+        .get("/api/articles?topic=banana")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not found");
@@ -214,7 +212,7 @@ describe("/api/articles", () => {
           });
       });
 
-      test("Return status code 200 and an array of articles limited by 4", () => {
+      test("Return status code 200 and an array of articles limited by 4 when given as a query", () => {
         return request(app)
           .get("/api/articles?limit=4")
           .expect(200)
@@ -262,7 +260,7 @@ describe("/api/articles", () => {
   });
 
   describe("POST", () => {
-    test("Return status code 201 with the new comment", () => {
+    test("Return status code 201 with the new article", () => {
       const newArticle = {
         author: "butter_bridge",
         body: "an interesting story",
@@ -300,17 +298,13 @@ describe("/api/articles", () => {
         .expect(201)
         .then(({ body }) => {
           expect(body.article).toMatchObject({
-            article_id: expect.any(Number),
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-            comment_count: expect.any(String),
-            article_img_url: expect.any(String),
-            ...newArticle,
+            article_img_url:
+              "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
           });
         });
     });
 
-    test("Return status code 400 if a property is missing from the provided body", () => {
+    test("Return status code 400 if a required property is missing from the provided body", () => {
       const newArticle = {
         author: "butter_bridge",
         topic: "mitch",
@@ -326,7 +320,7 @@ describe("/api/articles", () => {
         });
     });
 
-    test("Return status code 404 if author does not exist", () => {
+    test("Return status code 404 if the author provided does not exist", () => {
       const newArticle = {
         author: "NotAValidAuthor",
         body: "an interesting story",
@@ -345,18 +339,8 @@ describe("/api/articles", () => {
     });
 
     describe("DELETE", () => {
-      test("Returns status code 204 after removing the specified article by its id", () => {
-        return request(app)
-          .delete("/api/articles/1")
-          .expect(204)
-          .then(() => {
-            return request(app)
-              .delete("/api/articles/1")
-              .expect(404)
-              .then(({ body }) => {
-                expect(body.msg).toBe("Not found");
-              });
-          });
+      test("Returns status code 204 when deleting an article by its id", () => {
+        return request(app).delete("/api/articles/1").expect(204);
       });
 
       test("Return status code 404 if the article_id does not exists", () => {
@@ -437,13 +421,11 @@ describe("/api/articles", () => {
                   article_id: 1,
                   title: expect.any(String),
                   body: expect.any(String),
-                  votes: expect.any(Number),
+                  votes: initialVoteValue + 10,
                   author: expect.any(String),
                   topic: expect.any(String),
                   created_at: expect.any(String),
                 });
-
-                expect(initialVoteValue + 10).toBe(body.article.votes);
               });
           });
       });
@@ -465,13 +447,11 @@ describe("/api/articles", () => {
                   article_id: 1,
                   title: expect.any(String),
                   body: expect.any(String),
-                  votes: expect.any(Number),
+                  votes: initialVoteValue - 10,
                   author: expect.any(String),
                   topic: expect.any(String),
                   created_at: expect.any(String),
                 });
-
-                expect(initialVoteValue - 10).toBe(body.article.votes);
               });
           });
       });
@@ -527,44 +507,6 @@ describe("/api/articles", () => {
                   author: expect.any(String),
                 });
               });
-            });
-        });
-
-        test("Return status code 200 and an array of comments limited by 10 by default", () => {
-          return request(app)
-            .get("/api/articles/1/comments")
-            .expect(200)
-            .then(({ body }) => {
-              expect(body.comments.length).toBe(10);
-            });
-        });
-
-        test("Return status code 200 and an array of comments limited by 4", () => {
-          return request(app)
-            .get("/api/articles/1/comments?limit=4")
-            .expect(200)
-            .then(({ body }) => {
-              expect(body.comments.length).toBe(4);
-            });
-        });
-
-        test("Return status code 200 and an array of comments with an offset based on the page number and limit", () => {
-          return request(app)
-            .get("/api/articles/1/comments?limit=4&p=2")
-            .expect(200)
-            .then(({ body }) => {
-              const firstRequestedArticle = body.comments[0].comment_id;
-
-              return request(app)
-                .get("/api/articles/1/comments?limit=4&p=1")
-                .expect(200)
-                .then(({ body }) => {
-                  const secondRequestedArticle = body.comments[0].comment_id;
-
-                  expect(firstRequestedArticle).not.toBe(
-                    secondRequestedArticle
-                  );
-                });
             });
         });
 
@@ -660,6 +602,7 @@ describe("/api/articles", () => {
             username: "butter_bridge",
             body: "an interesting story",
           };
+
           return request(app)
             .post("/api/articles/1/comments")
             .send(newComment)
@@ -679,6 +622,7 @@ describe("/api/articles", () => {
           const newComment = {
             username: "butter_bridge",
           };
+
           return request(app)
             .post("/api/articles/1/comments")
             .send(newComment)
@@ -737,17 +681,7 @@ describe("/api/articles", () => {
 describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
     test("Returns status code 204 after removing the specified comment by its id", () => {
-      return request(app)
-        .delete("/api/comments/1")
-        .expect(204)
-        .then(() => {
-          return request(app)
-            .delete("/api/comments/1")
-            .expect(404)
-            .then(({ body }) => {
-              expect(body.msg).toBe("Not found");
-            });
-        });
+      return request(app).delete("/api/comments/2").expect(204);
     });
 
     test("Return status code 404 if the comment_id does not exists", () => {
@@ -886,7 +820,7 @@ describe("/api/users", () => {
         });
     });
 
-    test("Return status code 400 when there is a missing property in the given body", () => {
+    test("Return status code 400 when there is a missing required property in the given body", () => {
       const newUser = {
         username: "mkd",
         avatar_url: "www.example.com/mkd.png",

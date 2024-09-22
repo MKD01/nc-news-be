@@ -7,7 +7,6 @@ const {
   createArticle,
   removeArticleByArticleId,
 } = require("../models/articles.models");
-const { removeCommentByArticleId } = require("../models/comments.models");
 const { selectTopicByName } = require("../models/topics.models");
 const { selectUsersByUsername } = require("../models/users.models");
 
@@ -110,10 +109,7 @@ exports.postArticle = (req, res, next) => {
 exports.deleteArticleByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  Promise.all([
-    removeCommentByArticleId(article_id),
-    removeArticleByArticleId(article_id),
-  ])
+  removeArticleByArticleId(article_id)
     .then(() => {
       res.status(204).send({});
     })

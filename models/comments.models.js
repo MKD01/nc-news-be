@@ -36,7 +36,3 @@ exports.selectCommentByCommentId = (comment_id) => {
       }
     });
 };
-
-exports.removeCommentByArticleId = (article_id) => {
-  return db.query(`DELETE FROM comments WHERE article_id = $1`, [article_id]);
-};

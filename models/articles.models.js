@@ -25,8 +25,8 @@ exports.selctArticles = (
 
   let startPage = (page - 1) * limit;
 
-  let queryStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-  FROM articles 
+  let queryStr = `SELECT articles.article_id, title, articles.votes, articles.author, topic, articles.created_at, article_img_url, COUNT(comments.comment_id) AS comment_count
+  FROM articles
   LEFT JOIN comments 
   ON articles.article_id = comments.article_id`;
   const queryArr = [];
