@@ -380,6 +380,7 @@ describe("/api/articles", () => {
               created_at: expect.any(String),
               article_img_url: expect.any(String),
               comment_count: expect.any(String),
+              author_avatar_url: expect.any(String),
             });
           });
       });
@@ -505,6 +506,7 @@ describe("/api/articles", () => {
                   created_at: expect.any(String),
                   body: expect.any(String),
                   author: expect.any(String),
+                  author_avatar_url: expect.any(String),
                 });
               });
             });

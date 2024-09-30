@@ -49,12 +49,14 @@ exports.selctArticles = (
 exports.selectArticleByArticleId = (article_id) => {
   return db
     .query(
-      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+      `SELECT articles.*, avatar_url AS author_avatar_url, COUNT(comments.comment_id) AS comment_count
       FROM articles 
       LEFT JOIN comments 
-      ON articles.article_id = comments.article_id 
+      ON articles.article_id = comments.article_id
+      LEFT JOIN users
+      ON articles.author = users.username
       WHERE articles.article_id = $1 
-      GROUP BY articles.article_id;`,
+      GROUP BY articles.article_id, avatar_url;`,
       [article_id]
     )
     .then(({ rows }) => {
@@ -85,7 +87,15 @@ exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
 
   return db
     .query(
-      `SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT ${limit} OFFSET ${startPage}`,
+      `SELECT comment_id, votes, created_at, author, body, avatar_url AS author_avatar_url
+      FROM comments 
+      LEFT JOIN users
+      ON comments.author = users.username 
+      WHERE article_id = $1 
+      GROUP BY comment_id, avatar_url
+      ORDER BY created_at 
+      DESC LIMIT ${limit} 
+      OFFSET ${startPage}`,
       [articleId]
     )
     .then(({ rows }) => {
