@@ -87,11 +87,8 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.postArticle = (req, res, next) => {
   const { author, body, title, topic, article_img_url } = req.body;
 
-  Promise.all([
-    selectUsersByUsername(author),
-    createArticle(author, body, title, topic, article_img_url),
-  ])
-    .then(([_, { article_id }]) => {
+  createArticle(author, body, title, topic, article_img_url)
+    .then(({ article_id }) => {
       return selectArticleByArticleId(article_id);
     })
     .then((article) => {
