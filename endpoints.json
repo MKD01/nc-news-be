@@ -132,7 +132,8 @@
         "votes": 0,
         "author": "butter_bridge",
         "body": "an interesting story",
-        "created_at": "2022-12-04T05:12:54.000Z"
+        "created_at": "2022-12-04T05:12:54.000Z",
+        "author_avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
       }
     }
   },
@@ -164,10 +165,14 @@
     "exampleResponse": {
       "users": [
         {
-          "username": "tickle122"
+          "username": "tickle122",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953",
+          "name": "Tom Tickle"
         },
         {
-          "username": "grumpy19"
+          "username": "grumpy19",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/grumpy19.png/revision/latest?cb=20180127221953",
+          "name": "Grog grumpy19"
         }
       ]
     }
