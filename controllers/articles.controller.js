@@ -7,19 +7,12 @@ const {
   createArticle,
   removeArticleByArticleId,
 } = require("../models/articles.models");
-const { selectTopicByName } = require("../models/topics.models");
-const { selectUsersByUsername } = require("../models/users.models");
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order_by, topic, limit, p } = req.query;
 
-  const promises = [selctArticles(sort_by, order_by, topic, limit, p)];
-  if (topic) {
-    promises.push(selectTopicByName(topic));
-  }
-
-  Promise.all(promises)
-    .then(([articles]) => {
+  selctArticles(sort_by, order_by, topic, limit, p)
+    .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
@@ -43,11 +36,8 @@ exports.patchArticleByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
 
-  Promise.all([
-    selectArticleByArticleId(article_id),
-    updateArticlebyArticleId(inc_votes, article_id),
-  ])
-    .then(([_, article]) => {
+  updateArticlebyArticleId(inc_votes, article_id)
+    .then((article) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
