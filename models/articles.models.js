@@ -106,24 +106,16 @@ exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
 exports.createCommentArticleId = (username, body, articleId) => {
   return db
     .query(
-      `WITH c AS
-(
-    INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3)
-    RETURNING *
-)
-SELECT c.*, users.username AS author_avatar_url
-FROM c
-LEFT JOIN users
+      `WITH c AS (
+      INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) 
+      RETURNING * )
+      SELECT c.*, users.username AS author_avatar_url
+      FROM c
+      LEFT JOIN users
       ON c.author = users.username`,
-      [
-        // `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING comment_id, votes, created_at, author, body;`,
-        username,
-        body,
-        articleId,
-      ]
+      [username, body, articleId]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };
