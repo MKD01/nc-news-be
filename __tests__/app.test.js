@@ -610,12 +610,14 @@ describe("/api/articles", () => {
             .send(newComment)
             .expect(201)
             .then(({ body }) => {
-              expect(body.comment).toEqual({
+              expect(body.comment).toMatchObject({
+                article_id: 1,
                 comment_id: expect.any(Number),
                 votes: expect.any(Number),
                 created_at: expect.any(String),
                 body: "an interesting story",
                 author: "butter_bridge",
+                author_avatar_url: expect.any(String),
               });
             });
         });
