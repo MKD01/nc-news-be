@@ -8,8 +8,11 @@ const {
   postArticle,
 } = require("../controllers/articles.controller");
 const { getUsers, postUser } = require("../controllers/users.controllers");
+const { getStatus } = require("../controllers/api.controllers");
 
 const apiRouter = express.Router();
+
+apiRouter.get("/status", getStatus);
 
 apiRouter.get("/topics", getTopics);
 apiRouter.post("/topics", postTopics);

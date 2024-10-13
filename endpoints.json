@@ -2,6 +2,9 @@
   "GET /api": {
     "description": "Returns a json representation of all the available endpoints of the api"
   },
+  "GET /api/status": {
+    "description": "Returns 200 status code if the server is up and listening"
+  },
   "GET /api/topics": {
     "description": "Returns an array of all topics",
     "queries": [],

@@ -25,6 +25,14 @@ describe("/api", () => {
   });
 });
 
+describe("/api/status", () => {
+  describe("GET", () => {
+    test("Return status code 200 if the database can be queried", () => {
+      return request(app).get("/api/status").expect(200);
+    });
+  });
+});
+
 describe("/api/topics", () => {
   describe("GET", () => {
     test("Return status code 200 and an array of all the topics", () => {
