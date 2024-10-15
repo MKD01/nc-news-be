@@ -247,6 +247,17 @@ describe("/api/articles", () => {
           });
       });
 
+      test("Return status code 200 and an empty array if the given page and limit combo is too high", () => {
+        return request(app)
+          .get("/api/articles?limit=10&p=5")
+          .expect(200)
+          .then(({ body }) => {
+            const articles = body.articles;
+
+            expect(articles.length).toBe(0);
+          });
+      });
+
       test("Return status code 400 if limit is invalid", () => {
         return request(app)
           .get("/api/articles?limit=test")

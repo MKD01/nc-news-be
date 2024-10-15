@@ -7,12 +7,19 @@ const {
   createArticle,
   removeArticleByArticleId,
 } = require("../models/articles.models");
+const { selectTopicByName } = require("../models/topics.models");
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order_by, topic, limit, p } = req.query;
 
-  selctArticles(sort_by, order_by, topic, limit, p)
-    .then((articles) => {
+  const promises = [selctArticles(sort_by, order_by, topic, limit, p)];
+
+  if (topic) {
+    promises.push(selectTopicByName(topic));
+  }
+
+  Promise.all(promises)
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch((err) => {
