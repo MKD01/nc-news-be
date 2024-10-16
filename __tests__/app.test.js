@@ -122,6 +122,15 @@ describe("/api/articles", () => {
         });
     });
 
+    test("Return status code 200 and another property of count which represents the number of articles in the database", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.count).toBeGreaterThan(1);
+        });
+    });
+
     test("Return status code 200 and an array of articles sorted by date in descending order by default", () => {
       return request(app)
         .get("/api/articles")
@@ -531,12 +540,22 @@ describe("/api/articles", () => {
             });
         });
 
-        test("Return status code 200 with an empty array if no comments exist for the given article_id", () => {
+        test("Return status code 200 and another property of count which represents the number of articles in the database", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.count).toBeGreaterThan(1);
+            });
+        });
+
+        test("Return status code 200 with an empty array and a count of 0 if no comments exist for the given article_id", () => {
           return request(app)
             .get("/api/articles/8/comments")
             .expect(200)
             .then(({ body }) => {
               expect(body.comments).toEqual([]);
+              expect(body.count).toBe(0);
             });
         });
 

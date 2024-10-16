@@ -20,7 +20,7 @@ exports.getArticles = (req, res, next) => {
 
   Promise.all(promises)
     .then(([articles]) => {
-      res.status(200).send({ articles });
+      res.status(200).send(articles);
     })
     .catch((err) => {
       next(err);
@@ -61,7 +61,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     selectCommentsByArticleId(article_id, limit, p),
   ])
     .then(([_, comments]) => {
-      res.status(200).send({ comments });
+      res.status(200).send(comments);
     })
     .catch((err) => {
       next(err);

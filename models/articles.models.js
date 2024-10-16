@@ -1,4 +1,8 @@
 const db = require("../db/connection");
+const {
+  selectNumOfArticles,
+  selectNumOfCommentsByArticleId,
+} = require("./util.modals");
 
 exports.selctArticles = (
   sortBy = "created_at",
@@ -41,8 +45,10 @@ exports.selctArticles = (
   LIMIT ${limit}
   OFFSET ${startPage}`;
 
-  return db.query(queryStr, queryArr).then(({ rows }) => {
-    return rows;
+  const queries = [db.query(queryStr, queryArr), selectNumOfArticles()];
+
+  return Promise.all(queries).then(([{ rows: articles }, count]) => {
+    return { articles, count };
   });
 };
 
@@ -88,22 +94,25 @@ exports.updateArticlebyArticleId = (inc_votes, article_id) => {
 exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
   const startPage = (page - 1) * limit;
 
-  return db
-    .query(
+  const queries = [
+    db.query(
       `SELECT comment_id, votes, created_at, author, body, avatar_url AS author_avatar_url
-      FROM comments 
-      LEFT JOIN users
-      ON comments.author = users.username
-      WHERE article_id = $1 
-      GROUP BY comment_id, avatar_url
-      ORDER BY created_at 
-      DESC LIMIT ${limit} 
-      OFFSET ${startPage}`,
+    FROM comments 
+    LEFT JOIN users
+    ON comments.author = users.username
+    WHERE article_id = $1 
+    GROUP BY comment_id, avatar_url
+    ORDER BY created_at 
+    DESC LIMIT ${limit} 
+    OFFSET ${startPage}`,
       [articleId]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+    ),
+    selectNumOfCommentsByArticleId(articleId),
+  ];
+
+  return Promise.all(queries).then(([{ rows: comments }, count]) => {
+    return { comments, count };
+  });
 };
 
 exports.createCommentArticleId = (username, body, articleId) => {
