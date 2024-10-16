@@ -6,10 +6,16 @@ const getCountFromQuery = ({ rows }) => {
   return +count;
 };
 
-exports.selectNumOfArticles = () => {
-  const query = format("SELECT count(*) FROM %I", "articles");
+exports.selectNumOfArticles = (topic) => {
+  let query = format("SELECT count(*) FROM %I", "articles");
+  const queryArr = [];
 
-  return db.query(query).then(getCountFromQuery);
+  if (topic) {
+    query += ` WHERE topic = $1`;
+    queryArr.push(topic);
+  }
+
+  return db.query(query, queryArr).then(getCountFromQuery);
 };
 
 exports.selectNumOfCommentsByArticleId = (article_id) => {

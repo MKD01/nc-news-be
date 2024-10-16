@@ -176,6 +176,22 @@ describe("/api/articles", () => {
         });
     });
 
+    test("Return status code 200 and return a count with the correct number of articles when filtered by a specific topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          const filteredCount = body.count;
+
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.count).toBeGreaterThan(filteredCount);
+            });
+        });
+    });
+
     test("Return status code 200 and an array of articles in the correct order/filters when given multiple queries", () => {
       return request(app)
         .get("/api/articles?topic=mitch&order_by=asc&sort_by=title")

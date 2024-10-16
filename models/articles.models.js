@@ -45,7 +45,7 @@ exports.selctArticles = (
   LIMIT ${limit}
   OFFSET ${startPage}`;
 
-  const queries = [db.query(queryStr, queryArr), selectNumOfArticles()];
+  const queries = [db.query(queryStr, queryArr), selectNumOfArticles(topic)];
 
   return Promise.all(queries).then(([{ rows: articles }, count]) => {
     return { articles, count };
